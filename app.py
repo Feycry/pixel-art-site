@@ -8,57 +8,57 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    threads = forum.get_threads()
-    print(threads)
-    return render_template("index.html", threads=threads)
+    posts = forum.get_posts()
+    print(posts)
+    return render_template("index.html", posts=posts)
 
-@app.route("/thread/<int:thread_id>")
-def show_thread(thread_id):
-    thread = forum.get_thread(thread_id)
-    messages = forum.get_messages(thread_id)
-    return render_template("thread.html", thread=thread, messages=messages)
+@app.route("/post/<int:post_id>")
+def show_post(post_id):
+    post = forum.get_post(post_id)
+    comments = forum.get_comments(post_id)
+    return render_template("post.html", post=post, comments=comments)
 
-@app.route("/new_thread", methods=["POST"])
-def new_thread():
+@app.route("/new_post", methods=["POST"])
+def new_post():
     title = request.form["title"]
     content = request.form["content"]
     user_id = session["user_id"]
 
-    thread_id = forum.add_thread(title, content, user_id)
-    return redirect("/thread/" + str(thread_id))
+    post_id = forum.add_post(title, content, user_id)
+    return redirect("/post/" + str(post_id))
 
-@app.route("/new_message", methods=["POST"])
-def new_message():
+@app.route("/new_comment", methods=["POST"])
+def new_comment():
     content = request.form["content"]
     user_id = session["user_id"]
-    thread_id = request.form["thread_id"]
+    post_id = request.form["post_id"]
 
-    forum.add_message(content, user_id, thread_id)
-    return redirect("/thread/" + str(thread_id))
+    forum.add_comment(content, user_id, post_id)
+    return redirect("/post/" + str(post_id))
 
-@app.route("/edit/<int:message_id>", methods=["GET", "POST"])
-def edit_message(message_id):
-    message = forum.get_message(message_id)
+@app.route("/edit/<int:comment_id>", methods=["GET", "POST"])
+def edit_comment(comment_id):
+    comment = forum.get_comment(comment_id)
 
     if request.method == "GET":
-        return render_template("edit.html", message=message)
+        return render_template("edit.html", comment=comment)
 
     if request.method == "POST":
         content = request.form["content"]
-        forum.update_message(message["id"], content)
-        return redirect("/thread/" + str(message["thread_id"]))
+        forum.update_comment(comment["id"], content)
+        return redirect("/post/" + str(comment["post_id"]))
 
-@app.route("/remove/<int:message_id>", methods=["GET", "POST"])
-def remove_message(message_id):
-    message = forum.get_message(message_id)
+@app.route("/remove/<int:comment_id>", methods=["GET", "POST"])
+def remove_comment(comment_id):
+    comment = forum.get_comment(comment_id)
 
     if request.method == "GET":
-        return render_template("remove.html", message=message)
+        return render_template("remove.html", comment=comment)
 
     if request.method == "POST":
         if "continue" in request.form:
-            forum.remove_message(message["id"])
-        return redirect("/thread/" + str(message["thread_id"]))
+            forum.remove_comment(comment["id"])
+        return redirect("/post/" + str(comment["post_id"]))
 
 @app.route("/register")
 def register():
