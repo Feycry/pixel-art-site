@@ -12,12 +12,8 @@ CREATE TABLE posts (
     size TEXT CHECK(size IN ('16x16', '32x32', '64x64')) DEFAULT '32x32',
     palette TEXT, -- Can store palette name or ID for predefined palettes
     likes INTEGER DEFAULT 0,
-    state INTEGER DEFAULT 1 -- 1 = active, 0 = deleted
-);
-
-CREATE TABLE post_data (
-    post_id INTEGER PRIMARY KEY REFERENCES posts(id),
-    data BLOB NOT NULL
+    state INTEGER DEFAULT 1, -- 1 = active, 0 = deleted
+    image_data BLOB NOT NULL -- raw image data
 );
 
 CREATE TABLE tags (

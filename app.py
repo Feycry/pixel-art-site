@@ -1,7 +1,8 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, Response
 import config, forum, users
+import io
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -12,20 +13,42 @@ def index():
     print(posts)
     return render_template("index.html", posts=posts)
 
+@app.route("/submit")
+def submit():
+    return render_template("submit.html")
+
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
     post = forum.get_post(post_id)
     comments = forum.get_comments(post_id)
     return render_template("post.html", post=post, comments=comments)
 
+@app.route("/post/<int:post_id>/image")
+def get_post_image(post_id):
+    post = forum.get_post(post_id)
+    if post and post["image_data"]:
+        return Response(io.BytesIO(post["image_data"]).getvalue(), mimetype="image/png")
+    return "Image not found", 404
+
 @app.route("/new_post", methods=["POST"])
 def new_post():
     title = request.form["title"]
-    content = request.form["content"]
-    user_id = session["user_id"]
+    user_id = session.get("user_id")
+    
+    if not user_id:
+        return redirect("/login")
 
-    post_id = forum.add_post(title, content, user_id)
-    return redirect("/post/" + str(post_id))
+    # Handle image upload
+    image = request.files.get("image")
+    if not image or image.filename == "":
+        return "VIRHE: Kuva puuttuu", 400
+
+    if not image.filename.endswith(".png"):
+        return "VIRHE: Vain PNG-kuvat sallittu", 400
+
+    post_id = forum.add_post(title, sqlite3.Binary(image.read()), user_id)
+    
+    return redirect(f"/post/{post_id}")
 
 @app.route("/new_comment", methods=["POST"])
 def new_comment():

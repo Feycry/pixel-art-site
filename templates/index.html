@@ -2,18 +2,19 @@
 <html>
 
 <head>
-  <title>Keskustelu</title>
+  <title>pixel-art-site</title>
 </head>
 
 <body>
-  <h1>Keskustelu</h1>
+  <h1>pixel-art-site</h1>
 
   <p>
-    <a href="/register">Luo tunnus</a> |
     {% if session.user_id %}
-    <a href="/logout">Kirjaudu ulos</a>
+    <a href="/logout">Log out</a> |
+    <a href="/submit">Create post</a>
     {% else %}
-    <a href="/login">Kirjaudu sisään</a>
+    <a href="/register">Sign up</a> |
+    <a href="/login">Sign in</a>
     {% endif %}
   </p>
 
@@ -26,22 +27,6 @@
   </p>
   <hr />
   {% endfor %}
-
-  {% if session.user_id %}
-  <h2>Uusi ketju</h2>
-
-  <form action="/new_post" method="post">
-    <p>
-      Otsikko:<br />
-      <input type="text" name="title" />
-    </p>
-    <p>
-      Viesti:<br />
-      <textarea name="content" rows="5" cols="40"></textarea>
-    </p>
-    <input type="submit" value="Lähetä" />
-  </form>
-  {% endif %}
 </body>
 
 </html>
