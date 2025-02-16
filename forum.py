@@ -23,7 +23,8 @@ def get_comments(post_id):
 
 def get_comment(comment_id):
     sql = "SELECT id, content, user_id, post_id FROM comments WHERE id = ?"
-    return db.query(sql, [comment_id])[0]
+    result = db.query(sql, [comment_id])
+    return result[0] if result else None
 
 def add_post(title, image, user_id):
     sql = "INSERT INTO posts (title, image_data, user_id) VALUES (?, ?, ?)"

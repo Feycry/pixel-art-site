@@ -67,6 +67,9 @@ def new_comment():
 def edit_comment(comment_id):
     comment = forum.get_comment(comment_id)
 
+    if not comment:
+        abort(404)
+
     if not "user_id" in session:
         return redirect("/login")
     if comment["user_id"] != session["user_id"]:
@@ -83,6 +86,9 @@ def edit_comment(comment_id):
 @app.route("/remove/<int:comment_id>", methods=["GET", "POST"])
 def remove_comment(comment_id):
     comment = forum.get_comment(comment_id)
+
+    if not comment:
+        abort(404)
 
     if not "user_id" in session:
         return redirect("/login")
