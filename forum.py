@@ -43,3 +43,26 @@ def update_comment(comment_id, content):
 def remove_comment(comment_id):
     sql = "UPDATE comments SET state = 0 WHERE id = ?"
     db.execute(sql, [comment_id])
+
+def get_tags(post_id):
+    sql = """SELECT t.name FROM tags t
+             JOIN post_tags pt ON t.id = pt.tag_id
+             WHERE pt.post_id = ?"""
+    return db.query(sql, [post_id])
+
+def add_tag_to_post(post_id, tag):
+    tag = tag.strip()
+    if tag:
+        tag_id = get_or_create_tag(tag)
+        sql = "INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)"
+        db.execute(sql, [post_id, tag_id])
+
+def get_or_create_tag(tag_name):
+    sql = "SELECT id FROM tags WHERE name = ?"
+    result = db.query(sql, [tag_name])
+    if result:
+        return result[0]["id"]
+    else:
+        sql = "INSERT INTO tags (name) VALUES (?)"
+        db.execute(sql, [tag_name])
+        return db.last_insert_id()

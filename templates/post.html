@@ -10,6 +10,12 @@
 
   <img src="{{ url_for('get_post_image', post_id=post.id) }}" alt="Post Image">
 
+  <p>Tagit: 
+    {% for tag in tags %}
+      <span>{{ tag.name }}</span>{% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+
   <hr />
   {% for comment in comments %}
   <p>

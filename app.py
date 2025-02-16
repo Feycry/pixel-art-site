@@ -26,7 +26,8 @@ def show_post(post_id):
         abort(404)
 
     comments = forum.get_comments(post_id)
-    return render_template("post.html", post=post, comments=comments)
+    tags = forum.get_tags(post_id)
+    return render_template("post.html", post=post, comments=comments, tags=tags)
 
 @app.route("/post/<int:post_id>/image")
 def get_post_image(post_id):
@@ -41,6 +42,7 @@ def new_post():
 
     title = request.form["title"]
     user_id = session.get("user_id")
+    tags = request.form["tags"]
 
     if not title or len(title) > 100:
         abort(403)
@@ -55,6 +57,9 @@ def new_post():
 
     try:
         post_id = forum.add_post(title, sqlite3.Binary(image.read()), user_id)
+        if tags:
+            for tag in tags.split(","):
+                forum.add_tag_to_post(post_id, tag)
     except sqlite3.IntegrityError:
         abort(403)
     
