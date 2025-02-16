@@ -182,3 +182,11 @@ def search():
     
     posts = forum.search(query)
     return render_template("index.html", posts=posts)
+
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    comments = users.get_comments(user_id)
+    return render_template("user.html", user=user, comments=comments)

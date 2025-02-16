@@ -21,3 +21,19 @@ def check_login(username, password):
 def require_login():
     if "user_id" not in session:
         return abort(403)
+
+def get_user(user_id):
+    sql = "SELECT username FROM users WHERE id = ?"
+    result = db.query(sql, [user_id])
+    return result[0] if result else None
+
+def get_comments(user_id):
+    sql = """SELECT c.id,
+                    c.post_id,
+                    p.title thread_title,
+                    c.sent_at
+             FROM posts p, comments c
+             WHERE p.id = c.post_id AND
+                   c.user_id = ?
+             ORDER BY c.sent_at DESC"""
+    return db.query(sql, [user_id])

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<h1>Käyttäjä {{ user.username }}</h1>
+
+<p>
+  Käyttäjä on lähettänyt {{ comments | count }} viestiä
+</p>
+
+{% if comments %}
+<p>
+  Ensimmäinen viesti lähetetty {{ comments[-1].sent_at }}
+</p>
+<p>
+  Viimeisin viesti lähetetty {{ comments[0].sent_at }}
+</p>
+{% endif %}
+
+<ul>
+  {% for comment in comments %}
+    <li>
+      <a href="/post/{{ comment.post_id }}#{{ comment.id }}">
+        {{ comment.thread_title }}
+      </a>
+      <br />
+      ({{ comment.sent_at }})
+    </li>  
+  {% endfor %}
+  </ul>
+
+</html>
