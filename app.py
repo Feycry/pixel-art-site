@@ -20,6 +20,10 @@ def submit():
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
     post = forum.get_post(post_id)
+
+    if not post:
+        abort(404)
+
     comments = forum.get_comments(post_id)
     return render_template("post.html", post=post, comments=comments)
 
