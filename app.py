@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session, Response
+from flask import redirect, render_template, request, session, Response, abort
 import config, forum, users
 import io
 
@@ -63,6 +63,11 @@ def new_comment():
 def edit_comment(comment_id):
     comment = forum.get_comment(comment_id)
 
+    if not "user_id" in session:
+        return redirect("/login")
+    if comment["user_id"] != session["user_id"]:
+        abort(403)
+
     if request.method == "GET":
         return render_template("edit.html", comment=comment)
 
@@ -74,6 +79,11 @@ def edit_comment(comment_id):
 @app.route("/remove/<int:comment_id>", methods=["GET", "POST"])
 def remove_comment(comment_id):
     comment = forum.get_comment(comment_id)
+
+    if not "user_id" in session:
+        return redirect("/login")
+    if comment["user_id"] != session["user_id"]:
+        abort(403)
 
     if request.method == "GET":
         return render_template("remove.html", comment=comment)
