@@ -58,7 +58,14 @@ def new_post():
     try:
         post_id = forum.add_post(title, sqlite3.Binary(image.read()), user_id)
         if tags:
+            unique_tags = set()
             for tag in tags.split(","):
+                tag = tag.strip()
+                if len(tag) > 32:
+                    return "VIRHE: Tagin pituus saa olla enintään 32 merkkiä", 400
+                if tag in unique_tags:
+                    continue
+                unique_tags.add(tag)
                 forum.add_tag_to_post(post_id, tag)
     except sqlite3.IntegrityError:
         abort(403)
