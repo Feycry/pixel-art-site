@@ -2,6 +2,7 @@ import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session, Response, abort
 import config, forum, users
+from users import require_login
 import io
 
 app = Flask(__name__)
@@ -36,11 +37,10 @@ def get_post_image(post_id):
 
 @app.route("/new_post", methods=["POST"])
 def new_post():
+    require_login()
+
     title = request.form["title"]
     user_id = session.get("user_id")
-    
-    if not user_id:
-        return redirect("/login")
 
     # Handle image upload
     image = request.files.get("image")
@@ -50,12 +50,17 @@ def new_post():
     if not image.filename.endswith(".png"):
         return "VIRHE: Vain PNG-kuvat sallittu", 400
 
-    post_id = forum.add_post(title, sqlite3.Binary(image.read()), user_id)
+    try:
+        post_id = forum.add_post(title, sqlite3.Binary(image.read()), user_id)
+    except sqlite3.IntegrityError:
+        abort(403)
     
     return redirect(f"/post/{post_id}")
 
 @app.route("/new_comment", methods=["POST"])
 def new_comment():
+    require_login()
+
     content = request.form["content"]
     user_id = session["user_id"]
     post_id = request.form["post_id"]
@@ -65,13 +70,13 @@ def new_comment():
 
 @app.route("/edit/<int:comment_id>", methods=["GET", "POST"])
 def edit_comment(comment_id):
+    require_login()
+
     comment = forum.get_comment(comment_id)
 
     if not comment:
         abort(404)
 
-    if not "user_id" in session:
-        return redirect("/login")
     if comment["user_id"] != session["user_id"]:
         abort(403)
 
@@ -85,13 +90,13 @@ def edit_comment(comment_id):
 
 @app.route("/remove/<int:comment_id>", methods=["GET", "POST"])
 def remove_comment(comment_id):
+    require_login()
+
     comment = forum.get_comment(comment_id)
 
     if not comment:
         abort(404)
 
-    if not "user_id" in session:
-        return redirect("/login")
     if comment["user_id"] != session["user_id"]:
         abort(403)
 

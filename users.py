@@ -1,5 +1,6 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 import db
+from flask import session, abort
 
 def create_user(username, password):
     password_hash = generate_password_hash(password)
@@ -16,3 +17,7 @@ def check_login(username, password):
             return user_id
 
     return None
+
+def require_login():
+    if "user_id" not in session:
+        return abort(403)
