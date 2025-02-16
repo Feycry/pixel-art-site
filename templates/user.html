@@ -4,18 +4,34 @@
 <h1>Käyttäjä {{ user.username }}</h1>
 
 <p>
+  Käyttäjä on luonut {{ posts | count }} teosta
+</p>
+
+{% if posts %}
+<h2>Käyttäjän teokset</h2>
+<ul>
+  {% for post in posts %}
+    <li>
+      <a href="/post/{{ post.id }}">{{ post.title }}</a>
+      <br />
+      ({{ post.created_at }})
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<p>
   Käyttäjä on lähettänyt {{ comments | count }} viestiä
 </p>
 
 {% if comments %}
+<h2>Käyttäjän viestit</h2>
 <p>
   Ensimmäinen viesti lähetetty {{ comments[-1].sent_at }}
 </p>
 <p>
   Viimeisin viesti lähetetty {{ comments[0].sent_at }}
 </p>
-{% endif %}
-
 <ul>
   {% for comment in comments %}
     <li>
@@ -26,6 +42,7 @@
       ({{ comment.sent_at }})
     </li>  
   {% endfor %}
-  </ul>
+</ul>
+{% endif %}
 
 </html>

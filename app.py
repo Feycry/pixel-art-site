@@ -190,4 +190,5 @@ def show_user(user_id):
     if not user:
         abort(404)
     comments = users.get_comments(user_id)
-    return render_template("user.html", user=user, comments=comments)
+    posts = forum.get_user_posts(user_id)  # Add this line to fetch user's posts
+    return render_template("user.html", user=user, comments=comments, posts=posts)  # Pass posts to the template

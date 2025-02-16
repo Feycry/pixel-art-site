@@ -14,6 +14,10 @@ def get_post(post_id):
     result = db.query(sql, [post_id])
     return result[0] if result else None
 
+def get_user_posts(user_id):
+    sql = "SELECT id, title, created_at FROM posts WHERE user_id = ? AND state = 1 ORDER BY created_at DESC"
+    return db.query(sql, [user_id])
+
 def get_comments(post_id):
     sql = """SELECT c.id, c.content, c.sent_at, c.user_id, u.username
              FROM comments c, users u
