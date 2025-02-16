@@ -66,3 +66,18 @@ def get_or_create_tag(tag_name):
         sql = "INSERT INTO tags (name) VALUES (?)"
         db.execute(sql, [tag_name])
         return db.last_insert_id()
+
+def search(query):
+    tags = [tag.strip() for tag in query.split(",")]
+    placeholders = ', '.join('?' for _ in tags)
+    sql = f"""SELECT p.id, p.title, COUNT(c.id) total, MAX(c.sent_at) last
+              FROM posts p
+              LEFT JOIN comments c ON p.id = c.post_id
+              JOIN post_tags pt ON p.id = pt.post_id
+              JOIN tags t ON pt.tag_id = t.id
+              WHERE t.name IN ({placeholders})
+              AND p.state = 1
+              GROUP BY p.id
+              HAVING COUNT(DISTINCT t.id) = ?
+              ORDER BY p.id DESC"""
+    return db.query(sql, tags + [len(tags)])

@@ -173,3 +173,12 @@ def login():
 def logout():
     del session["user_id"]
     return redirect("/")
+
+@app.route("/search")
+def search():
+    query = request.args.get("query")
+    if not query:
+        return redirect("/")
+    
+    posts = forum.search(query)
+    return render_template("index.html", posts=posts)
