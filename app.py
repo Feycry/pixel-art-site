@@ -27,7 +27,8 @@ def show_post(post_id):
 
     comments = forum.get_comments(post_id)
     tags = forum.get_tags(post_id)
-    return render_template("post.html", post=post, comments=comments, tags=tags)
+    user = users.get_user(post["user_id"])[0]
+    return render_template("post.html", post=post, comments=comments, tags=tags, user=user)
 
 @app.route("/post/<int:post_id>/image")
 def get_post_image(post_id):

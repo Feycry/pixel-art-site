@@ -10,7 +10,7 @@ def get_posts():
     return db.query(sql)
 
 def get_post(post_id):
-    sql = "SELECT id, title, image_data FROM posts WHERE id = ?"
+    sql = "SELECT id, title, image_data, user_id FROM posts WHERE id = ?"
     result = db.query(sql, [post_id])
     return result[0] if result else None
 

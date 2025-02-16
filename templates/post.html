@@ -8,6 +8,8 @@
 <body>
   <h1>{{ post.title }}</h1>
 
+  <p>Luonut: <a href="/user/{{ post.user_id }}">{{ user }}</a></p>
+
   <img src="{{ url_for('get_post_image', post_id=post.id) }}" alt="Post Image">
 
   <p>Tagit: 
@@ -19,7 +21,7 @@
   <hr />
   {% for comment in comments %}
   <p id="{{ comment.id }}">
-    {{ comment.username }} ({{ comment.sent_at }}):
+    <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
   </p>
   <p>
     {{ comment.content }}
