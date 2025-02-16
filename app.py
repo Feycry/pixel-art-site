@@ -42,6 +42,9 @@ def new_post():
     title = request.form["title"]
     user_id = session.get("user_id")
 
+    if not title or len(title) > 100:
+        abort(403)
+
     # Handle image upload
     image = request.files.get("image")
     if not image or image.filename == "":
@@ -65,6 +68,9 @@ def new_comment():
     user_id = session["user_id"]
     post_id = request.form["post_id"]
 
+    if not content or len(content) > 5000:
+        abort(403)
+
     forum.add_comment(content, user_id, post_id)
     return redirect("/post/" + str(post_id))
 
@@ -85,6 +91,10 @@ def edit_comment(comment_id):
 
     if request.method == "POST":
         content = request.form["content"]
+
+        if len(content) > 5000:
+            abort(403)
+
         forum.update_comment(comment["id"], content)
         return redirect("/post/" + str(comment["post_id"]))
 
