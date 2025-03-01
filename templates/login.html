@@ -9,6 +9,7 @@
   <h1>Kirjaudu sisään</h1>
 
   <form action="/login" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
       Tunnus: <br />
       <input type="text" name="username" required />

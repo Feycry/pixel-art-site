@@ -9,6 +9,7 @@
   <h1>Luo tunnus</h1>
 
   <form action="/new_user" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
       Tunnus: <br />
       <input type="text" name="username" required />

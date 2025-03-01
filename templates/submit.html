@@ -12,6 +12,7 @@
   <h2>Uusi ketju</h2>
 
   <form action="/new_post" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
       Otsikko:<br />
       <input type="text" name="title" maxlength="100" required />

@@ -1,13 +1,26 @@
 import sqlite3
-from flask import Flask
-from flask import redirect, render_template, request, session, Response, abort
+from flask import Flask, redirect, render_template, request, session, Response, abort
 import config, forum, users
 from users import require_login
 import io
 import re
+import secrets
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def check_csrf():
+    if request.method == "POST":
+        token = request.form.get("csrf_token")
+    else:
+        token = request.args.get("csrf_token")
+    if not token or token != session.get("csrf_token"):
+        abort(403)
+
+@app.before_request
+def before_request():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
 
 @app.route("/")
 def index():
@@ -41,6 +54,7 @@ def get_post_image(post_id):
 @app.route("/new_post", methods=["POST"])
 def new_post():
     require_login()
+    check_csrf()
 
     title = request.form["title"]
     user_id = session.get("user_id")
@@ -77,6 +91,7 @@ def new_post():
 @app.route("/new_comment", methods=["POST"])
 def new_comment():
     require_login()
+    check_csrf()
 
     content = request.form["content"].strip()
     user_id = session["user_id"]
@@ -94,6 +109,7 @@ def new_comment():
 @app.route("/edit/<int:comment_id>", methods=["GET", "POST"])
 def edit_comment(comment_id):
     require_login()
+    check_csrf()
 
     comment = forum.get_comment(comment_id)
 
@@ -118,6 +134,7 @@ def edit_comment(comment_id):
 @app.route("/remove/<int:comment_id>", methods=["GET", "POST"])
 def remove_comment(comment_id):
     require_login()
+    check_csrf()
 
     comment = forum.get_comment(comment_id)
 
@@ -141,6 +158,7 @@ def register():
 
 @app.route("/new_user", methods=["GET", "POST"])
 def new_user():
+    check_csrf()
     if request.method == "GET":
         return render_template("register.html")
 
@@ -185,6 +203,7 @@ def login():
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             return "VIRHE: väärä tunnus tai salasana"
