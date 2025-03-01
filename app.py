@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, session, Response, abort
 import config, forum, users
 from users import require_login
 import io
+import re
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -46,9 +47,9 @@ def new_post():
     tags = request.form["tags"]
 
     if not title or len(title) > 100:
-        abort(403)
+        return "VIRHE: Otsikko on pakollinen ja sen pituus saa olla enintään 100 merkkiä", 400
 
-    # Handle image upload
+        # Handle image upload
     image = request.files.get("image")
     if not image or image.filename == "":
         return "VIRHE: Kuva puuttuu", 400
@@ -77,12 +78,15 @@ def new_post():
 def new_comment():
     require_login()
 
-    content = request.form["content"]
+    content = request.form["content"].strip()
     user_id = session["user_id"]
     post_id = request.form["post_id"]
 
     if not content or len(content) > 5000:
-        abort(403)
+        return "VIRHE: Kommentti on pakollinen ja sen pituus saa olla enintään 5000 merkkiä", 400
+
+    if not post_id or not post_id.isdigit():
+        return "VIRHE: Virheellinen post ID", 400
 
     forum.add_comment(content, user_id, post_id)
     return redirect("/post/" + str(post_id))
@@ -105,8 +109,8 @@ def edit_comment(comment_id):
     if request.method == "POST":
         content = request.form["content"]
 
-        if len(content) > 5000:
-            abort(403)
+        if not content or len(content) > 5000:
+            return "VIRHE: Kommentti on pakollinen ja sen pituus saa olla enintään 5000 merkkiä", 400
 
         forum.update_comment(comment["id"], content)
         return redirect("/post/" + str(comment["post_id"]))
@@ -145,8 +149,20 @@ def new_user():
         password1 = request.form["password1"]
         password2 = request.form["password2"]
 
+        if not username or not password1 or not password2:
+            return "VIRHE: Tunnus ja salasana ovat pakollisia"
+
         if password1 != password2:
             return "VIRHE: salasanat eivät ole samat"
+
+        if len(username) < 3 or len(username) > 20:
+            return "VIRHE: Tunnuksen pituus tulee olla 3-20 merkkiä"
+
+        if len(password1) < 6:
+            return "VIRHE: Salasanan pituus tulee olla vähintään 6 merkkiä"
+
+        if not re.match("^[a-zA-Z0-9_]+$", username):
+            return "VIRHE: Tunnus saa sisältää vain kirjaimia, numeroita ja alaviivoja"
 
         try:
             users.create_user(username, password1)
@@ -162,6 +178,9 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+
+        if not username or not password:
+            return "VIRHE: Tunnus ja salasana ovat pakollisia"
 
         user_id = users.check_login(username, password)
         if user_id:
