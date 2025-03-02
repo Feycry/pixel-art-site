@@ -16,6 +16,7 @@
 
   <form action="/login" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="hidden" name="next_page" value="{{ next_page }}" />
     <p>
       Tunnus: <br />
       <input type="text" name="username" required />

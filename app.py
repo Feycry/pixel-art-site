@@ -210,24 +210,22 @@ def new_user():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        next_page = request.args.get("next_page", request.referrer)
+        return render_template("login.html", next_page=next_page)
 
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-
-        if not username or not password:
-            flash("VIRHE: Tunnus ja salasana ovat pakollisia")
-            return redirect("/login")
+        next_page = request.form["next_page"]
 
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
             session["csrf_token"] = secrets.token_hex(16)
-            return redirect("/")
+            return redirect(next_page or "/")
         else:
-            flash("VIRHE: väärä tunnus tai salasana")
-            return redirect("/login")
+            flash("VIRHE: Väärä tunnus tai salasana")
+            return render_template("login.html", next_page=next_page)
 
 @app.route("/logout")
 def logout():
