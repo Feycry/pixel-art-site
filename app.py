@@ -160,13 +160,13 @@ def remove_comment(comment_id):
 
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    return render_template("register.html", filled={})
 
 @app.route("/new_user", methods=["GET", "POST"])
 def new_user():
     check_csrf()
     if request.method == "GET":
-        return render_template("register.html")
+        return render_template("register.html", filled={})
 
     if request.method == "POST":
         username = request.form["username"]
@@ -175,23 +175,28 @@ def new_user():
 
         if not username or not password1 or not password2:
             flash("VIRHE: Tunnus ja salasana ovat pakollisia")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
         if password1 != password2:
             flash("VIRHE: salasanat eivät ole samat")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
         if len(username) < 3 or len(username) > 20:
             flash("VIRHE: Tunnuksen pituus tulee olla 3-20 merkkiä")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
         if len(password1) < 6:
             flash("VIRHE: Salasanan pituus tulee olla vähintään 6 merkkiä")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
         if not re.match("^[a-zA-Z0-9_]+$", username):
             flash("VIRHE: Tunnus saa sisältää vain kirjaimia, numeroita ja alaviivoja")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
         try:
             users.create_user(username, password1)
@@ -199,7 +204,8 @@ def new_user():
             return redirect("/login")
         except sqlite3.IntegrityError:
             flash("VIRHE: tunnus on jo varattu")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

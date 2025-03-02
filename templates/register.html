@@ -18,7 +18,7 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
       Tunnus: <br />
-      <input type="text" name="username" required />
+      <input type="text" name="username" value="{{ filled.username }}" maxlength="20" required />
     </p>
     <p>
       Salasana: <br />
