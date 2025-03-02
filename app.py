@@ -5,6 +5,7 @@ from users import require_login
 import io
 import re
 import secrets
+import markupsafe
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -21,6 +22,12 @@ def check_csrf():
 def before_request():
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_hex(16)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 @app.route("/")
 def index():

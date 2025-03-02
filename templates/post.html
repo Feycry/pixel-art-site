@@ -24,7 +24,7 @@
     <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
   </p>
   <p>
-    {{ comment.content }}
+    {{ comment.content | show_lines }}
   </p>
   {% if comment.user_id == session.user_id %}
   <p>
