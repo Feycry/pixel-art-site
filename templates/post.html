@@ -6,7 +6,8 @@
 </head>
 
 <body>
-  <h1>{{ post.title }}</h1>
+  <h1><a href="/">pixel-art-site</a></h1>
+  <h2>{{ post.title }}</h2>
 
   <p>Luonut: <a href="/user/{{ post.user_id }}">{{ user }}</a></p>
 
@@ -66,9 +67,6 @@
   </p>
   {% endif %}
 
-  <p>
-    <a href="/">Etusivulle</a>
-  </p>
 </body>
 
 </html>

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 
-<h1>Käyttäjä {{ user.username }}</h1>
+<h1><a href="/">pixel-art-site</a></h1>
+<h2>Käyttäjä {{ user.username }}</h2>
 
 <p>
   Käyttäjä on luonut {{ posts | count }} teosta
 </p>
 
 {% if posts %}
-<h2>Käyttäjän teokset</h2>
+<h3>Käyttäjän teokset</h3>
 <ul>
   {% for post in posts %}
     <li>
@@ -25,7 +26,7 @@
 </p>
 
 {% if comments %}
-<h2>Käyttäjän viestit</h2>
+<h3>Käyttäjän viestit</h3>
 <p>
   Ensimmäinen viesti lähetetty {{ comments[-1].sent_at }}
 </p>
