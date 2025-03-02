@@ -55,7 +55,7 @@ def new_post():
     require_login()
     check_csrf()
 
-    title = request.form["title"]
+    title = request.form["title"].strip()
     user_id = session.get("user_id")
     tags = request.form["tags"]
 
