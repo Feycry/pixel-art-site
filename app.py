@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, redirect, render_template, request, session, Response, abort
+from flask import Flask, redirect, render_template, request, session, Response, abort, flash
 import config, forum, users
 from users import require_login
 import io
@@ -25,7 +25,6 @@ def before_request():
 @app.route("/")
 def index():
     posts = forum.get_posts()
-    print(posts)
     return render_template("index.html", posts=posts)
 
 @app.route("/submit")
@@ -61,15 +60,17 @@ def new_post():
     tags = request.form["tags"]
 
     if not title or len(title) > 100:
-        return "VIRHE: Otsikko on pakollinen ja sen pituus saa olla enintään 100 merkkiä", 400
+        flash("VIRHE: Otsikko on pakollinen ja sen pituus saa olla enintään 100 merkkiä")
+        return redirect("/submit")
 
-        # Handle image upload
     image = request.files.get("image")
     if not image or image.filename == "":
-        return "VIRHE: Kuva puuttuu", 400
+        flash("VIRHE: Kuva puuttuu")
+        return redirect("/submit")
 
     if not image.filename.endswith(".png"):
-        return "VIRHE: Vain PNG-kuvat sallittu", 400
+        flash("VIRHE: Vain PNG-kuvat sallittu")
+        return redirect("/submit")
 
     try:
         post_id = forum.add_post(title, sqlite3.Binary(image.read()), user_id)
@@ -78,7 +79,8 @@ def new_post():
             for tag in tags.split(","):
                 tag = tag.strip()
                 if len(tag) > 32:
-                    return "VIRHE: Tagin pituus saa olla enintään 32 merkkiä", 400
+                    flash("VIRHE: Tagin pituus saa olla enintään 32 merkkiä")
+                    return redirect("/submit")
                 if tag in unique_tags:
                     continue
                 unique_tags.add(tag)
@@ -98,10 +100,12 @@ def new_comment():
     post_id = request.form["post_id"]
 
     if not content or len(content) > 5000:
-        return "VIRHE: Kommentti on pakollinen ja sen pituus saa olla enintään 5000 merkkiä", 400
+        flash("VIRHE: Kommentti ei saa olla tyhjä ja sen pituus saa olla enintään 5000 merkkiä")
+        return redirect(f"/post/{post_id}")
 
     if not post_id or not post_id.isdigit():
-        return "VIRHE: Virheellinen post ID", 400
+        flash("VIRHE: Virheellinen post ID")
+        return redirect(f"/post/{post_id}")
 
     forum.add_comment(content, user_id, post_id)
     return redirect("/post/" + str(post_id))
@@ -109,12 +113,12 @@ def new_comment():
 @app.route("/edit/<int:comment_id>", methods=["GET", "POST"])
 def edit_comment(comment_id):
     require_login()
-    check_csrf()
-
+    
     comment = forum.get_comment(comment_id)
 
     if not comment:
-        abort(404)
+        flash("VIRHE: Kommentti ei voi olla tyhjä")
+        return redirect(f"/edit/{comment_id}")
 
     if comment["user_id"] != session["user_id"]:
         abort(403)
@@ -123,10 +127,12 @@ def edit_comment(comment_id):
         return render_template("edit.html", comment=comment)
 
     if request.method == "POST":
+        check_csrf()
         content = request.form["content"]
 
         if not content or len(content) > 5000:
-            return "VIRHE: Kommentti on pakollinen ja sen pituus saa olla enintään 5000 merkkiä", 400
+            flash("VIRHE: Kommentti ei saa olla tyhjä ja sen pituus saa olla enintään 5000 merkkiä")
+            return redirect(f"/edit/{comment_id}")
 
         forum.update_comment(comment["id"], content)
         return redirect("/post/" + str(comment["post_id"]))
@@ -168,25 +174,32 @@ def new_user():
         password2 = request.form["password2"]
 
         if not username or not password1 or not password2:
-            return "VIRHE: Tunnus ja salasana ovat pakollisia"
+            flash("VIRHE: Tunnus ja salasana ovat pakollisia")
+            return redirect("/register")
 
         if password1 != password2:
-            return "VIRHE: salasanat eivät ole samat"
+            flash("VIRHE: salasanat eivät ole samat")
+            return redirect("/register")
 
         if len(username) < 3 or len(username) > 20:
-            return "VIRHE: Tunnuksen pituus tulee olla 3-20 merkkiä"
+            flash("VIRHE: Tunnuksen pituus tulee olla 3-20 merkkiä")
+            return redirect("/register")
 
         if len(password1) < 6:
-            return "VIRHE: Salasanan pituus tulee olla vähintään 6 merkkiä"
+            flash("VIRHE: Salasanan pituus tulee olla vähintään 6 merkkiä")
+            return redirect("/register")
 
         if not re.match("^[a-zA-Z0-9_]+$", username):
-            return "VIRHE: Tunnus saa sisältää vain kirjaimia, numeroita ja alaviivoja"
+            flash("VIRHE: Tunnus saa sisältää vain kirjaimia, numeroita ja alaviivoja")
+            return redirect("/register")
 
         try:
             users.create_user(username, password1)
-            return "Tunnus luotu"
+            flash("Tunnus luotu")
+            return redirect("/login")
         except sqlite3.IntegrityError:
-            return "VIRHE: tunnus on jo varattu"
+            flash("VIRHE: tunnus on jo varattu")
+            return redirect("/register")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -198,7 +211,8 @@ def login():
         password = request.form["password"]
 
         if not username or not password:
-            return "VIRHE: Tunnus ja salasana ovat pakollisia"
+            flash("VIRHE: Tunnus ja salasana ovat pakollisia")
+            return redirect("/login")
 
         user_id = users.check_login(username, password)
         if user_id:
@@ -206,7 +220,8 @@ def login():
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            flash("VIRHE: väärä tunnus tai salasana")
+            return redirect("/login")
 
 @app.route("/logout")
 def logout():
@@ -228,5 +243,5 @@ def show_user(user_id):
     if not user:
         abort(404)
     comments = users.get_comments(user_id)
-    posts = forum.get_user_posts(user_id)  # Add this line to fetch user's posts
-    return render_template("user.html", user=user, comments=comments, posts=posts)  # Pass posts to the template
+    posts = forum.get_user_posts(user_id)
+    return render_template("user.html", user=user, comments=comments, posts=posts)

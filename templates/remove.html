@@ -8,6 +8,12 @@
 <body>
   <h1>Viestin poisto</h1>
 
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
+
   <form action="/remove/{{ comment.id }}" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>
