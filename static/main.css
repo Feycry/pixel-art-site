@@ -1,48 +1,82 @@
 body {
     margin: auto;
     max-width: 50em;
-    font-family: sans-serif;
-    background-color: lightblue;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff; /* AliceBlue */
+    color: #333;
 }
 
 h1, h2 {
     margin: 0;
+    color: #333;
 }
-  
 
 .header {
-    background-color: black;
-    color: red;
+    background-color: #d3789b; /* SlateBlue */
+    color: #fff;
     padding: 1em;
     margin: 0.5em 0;
+    text-align: center;
 }
-  
+
 .nav {
-    background-color: lightgrey;
+    background-color: #e6e6fa; /* Lavender */
     padding: 0.5em;
     margin: 0.5em 0;
+    text-align: center;
 }
-  
+
+.nav a {
+    color: #6a5acd; /* SlateBlue */
+    text-decoration: none;
+    margin: 0 1em;
+}
+
+.nav a:hover {
+    text-decoration: underline;
+}
+
 .content {
-    background-color: rgb(216, 225, 226);
+    background-color: #faf0e6; /* Linen */
     padding: 1em;
     margin: 0.5em 0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .art {
-    background-color: rgb(216, 225, 226);
+    background-color: #faf0e6; /* Linen */
     padding: 1em;
     margin: 0.5em 0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .comment {
-    border: 2px solid black;
+    border: 2px solid #ffb6c1; /* LightPink */
     margin: 1em;
     padding: 0.2em 0.5em;
+    border-radius: 8px;
+    background-color: #fff0f5; /* LavenderBlush */
 }
 
 .new_comment {
-    border: 2px solid rgb(206, 129, 129);
+    border: 2px solid #ffb6c1; /* LightPink */
     margin: 1em;
     padding: 0.2em 0.5em;
+    border-radius: 8px;
+    background-color: #fff0f5; /* LavenderBlush */
+}
+
+input[type="submit"], button {
+    background-color: #ff7f50; /* Coral */
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover, button:hover {
+    background-color: #ff6347; /* Tomato */
 }
