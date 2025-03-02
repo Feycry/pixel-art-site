@@ -2,41 +2,46 @@
 <html>
 
 <head>
-  <title>New post</title>
+  <link rel="stylesheet" href="/static/main.css">
+  <title>Uusi teos</title>
 </head>
 
 <body>
-  <h1><a href="/">pixel-art-site</a></h1>
-  <h2>New post</h2>
+  <div class="header">
+    <h1><a href="/">pixel-art-site</a></h1>
+  </div>
 
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
+  <div class="content">
+    <h2>Uusi teos</h2>
 
-  {% if session.user_id %}
-  <h2>Uusi ketju</h2>
+    {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+    {% endfor %}
 
-  <form action="/new_post" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <p>
-      Otsikko:<br />
-      <input type="text" name="title" maxlength="100" required />
-    </p>
-    <p>
-      Lisää kuva (vain PNG):<br />
-      <input type="file" name="image" accept="image/png" required />
-    </p>
-    <p>
-      Tagit (pilkulla erotettuna):<br />
-      <input type="text" name="tags" />
-    </p>
-    <input type="submit" value="Lähetä" />
-  </form>
-  {% else %}
-  <a href="/login">Log in to create a new post</a>
-  {% endif %}
+    {% if session.user_id %}
+
+    <form action="/new_post" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <p>
+        Otsikko:<br />
+        <input type="text" name="title" maxlength="100" required />
+      </p>
+      <p>
+        Lisää kuva (vain PNG):<br />
+        <input type="file" name="image" accept="image/png" required />
+      </p>
+      <p>
+        Tagit (pilkulla erotettuna):<br />
+        <input type="text" name="tags" />
+      </p>
+      <input type="submit" value="Lähetä" />
+    </form>
+    {% else %}
+    <a href="/login">Log in to create a new post</a>
+    {% endif %}
+  </div>
 </body>
 
 </html>

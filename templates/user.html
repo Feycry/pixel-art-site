@@ -1,49 +1,61 @@
 <!DOCTYPE html>
 <html>
 
-<h1><a href="/">pixel-art-site</a></h1>
-<h2>Käyttäjä {{ user.username }}</h2>
+<head>
+  <link rel="stylesheet" href="/static/main.css">
+  <title>Käyttäjä {{ user.username }}</title>
+</head>
 
-<p>
-  Käyttäjä on luonut {{ posts | count }} teosta
-</p>
+<body>
+  <div class="header">
+    <h1><a href="/">pixel-art-site</a></h1>
+  </div>
 
-{% if posts %}
-<h3>Käyttäjän teokset</h3>
-<ul>
-  {% for post in posts %}
-    <li>
-      <a href="/post/{{ post.id }}">{{ post.title }}</a>
-      <br />
-      ({{ post.created_at }})
-    </li>
-  {% endfor %}
-</ul>
-{% endif %}
+  <div class="content">
+    <h2>Käyttäjä {{ user.username }}</h2>
 
-<p>
-  Käyttäjä on lähettänyt {{ comments | count }} viestiä
-</p>
+    <p>
+      Käyttäjä on luonut {{ posts | count }} teosta
+    </p>
 
-{% if comments %}
-<h3>Käyttäjän viestit</h3>
-<p>
-  Ensimmäinen viesti lähetetty {{ comments[-1].sent_at }}
-</p>
-<p>
-  Viimeisin viesti lähetetty {{ comments[0].sent_at }}
-</p>
-<ul>
-  {% for comment in comments %}
-    <li>
-      <a href="/post/{{ comment.post_id }}#{{ comment.id }}">
-        {{ comment.thread_title }}
-      </a>
-      <br />
-      ({{ comment.sent_at }})
-    </li>  
-  {% endfor %}
-</ul>
-{% endif %}
+    {% if posts %}
+    <h3>Käyttäjän teokset</h3>
+    <ul>
+      {% for post in posts %}
+        <li>
+          <a href="/post/{{ post.id }}">{{ post.title }}</a>
+          <br />
+          ({{ post.created_at }})
+        </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <p>
+      Käyttäjä on lähettänyt {{ comments | count }} viestiä
+    </p>
+
+    {% if comments %}
+    <h3>Käyttäjän viestit</h3>
+    <p>
+      Ensimmäinen viesti lähetetty {{ comments[-1].sent_at }}
+    </p>
+    <p>
+      Viimeisin viesti lähetetty {{ comments[0].sent_at }}
+    </p>
+    <ul>
+      {% for comment in comments %}
+        <li>
+          <a href="/post/{{ comment.post_id }}#{{ comment.id }}">
+            {{ comment.thread_title }}
+          </a>
+          <br />
+          ({{ comment.sent_at }})
+        </li>  
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</body>
 
 </html>

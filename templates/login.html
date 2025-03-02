@@ -2,37 +2,43 @@
 <html>
 
 <head>
+  <link rel="stylesheet" href="/static/main.css">
   <title>Kirjaudu sisään</title>
 </head>
 
 <body>
-  <h1><a href="/">pixel-art-site</a></h1>
-  <h2>Kirjaudu sisään</h2>
+  <div class="header">
+    <h1><a href="/">pixel-art-site</a></h1>
+  </div>
 
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
+  <div class="content">
+    <h2>Kirjaudu sisään</h2>
 
-  <form action="/login" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="hidden" name="next_page" value="{{ next_page }}" />
+    {% for message in get_flashed_messages() %}
     <p>
-      Tunnus: <br />
-      <input type="text" name="username" required />
+      <b>{{ message }}</b>
     </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" required />
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
+    {% endfor %}
 
-  <hr />
-  <p>
-    <a href="/">Etusivulle</a>
-  </p>
+    <form action="/login" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="hidden" name="next_page" value="{{ next_page }}" />
+      <p>
+        Tunnus: <br />
+        <input type="text" name="username" required />
+      </p>
+      <p>
+        Salasana: <br />
+        <input type="password" name="password" required />
+      </p>
+      <input type="submit" value="Kirjaudu" />
+    </form>
+
+    <hr />
+    <p>
+      <a href="/">Etusivulle</a>
+    </p>
+  </div>
 </body>
 
 </html>

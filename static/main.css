@@ -1,0 +1,48 @@
+body {
+    margin: auto;
+    max-width: 50em;
+    font-family: sans-serif;
+    background-color: lightblue;
+}
+
+h1, h2 {
+    margin: 0;
+}
+  
+
+.header {
+    background-color: black;
+    color: red;
+    padding: 1em;
+    margin: 0.5em 0;
+}
+  
+.nav {
+    background-color: lightgrey;
+    padding: 0.5em;
+    margin: 0.5em 0;
+}
+  
+.content {
+    background-color: rgb(216, 225, 226);
+    padding: 1em;
+    margin: 0.5em 0;
+}
+
+.art {
+    background-color: rgb(216, 225, 226);
+    padding: 1em;
+    margin: 0.5em 0;
+}
+
+.comment {
+    border: 2px solid black;
+    margin: 1em;
+    padding: 0.2em 0.5em;
+}
+
+.new_comment {
+    border: 2px solid rgb(206, 129, 129);
+    margin: 1em;
+    padding: 0.2em 0.5em;
+}

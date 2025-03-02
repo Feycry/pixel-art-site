@@ -2,71 +2,81 @@
 <html>
 
 <head>
+  <link rel="stylesheet" href="/static/main.css">
   <title>{{ post.title }}</title>
 </head>
 
 <body>
-  <h1><a href="/">pixel-art-site</a></h1>
-  <h2>{{ post.title }}</h2>
+  <div class="header">
+    <h1><a href="/">pixel-art-site</a></h1>
+  </div>
 
-  <p>Luonut: <a href="/user/{{ post.user_id }}">{{ user }}</a></p>
+  <div class="art">
+    <h2>{{ post.title }}</h2>
 
-  <img src="{{ url_for('get_post_image', post_id=post.id) }}" alt="Post Image">
+    <p>Luonut: <a href="/user/{{ post.user_id }}">{{ user }}</a></p>
 
-  <p>Tagit: 
-    {% for tag in tags %}
-      <span>{{ tag.name }}</span>{% if not loop.last %}, {% endif %}
-    {% endfor %}
-  </p>
+    <img src="{{ url_for('get_post_image', post_id=post.id) }}" alt="Post Image">
 
-  <hr />
-  {% for comment in comments %}
-  <p id="{{ comment.id }}">
-    <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
-  </p>
-  <p>
-    {{ comment.content | show_lines }}
-  </p>
-  {% if comment.user_id == session.user_id %}
-  <p>
-    <form action="/edit/{{ comment.id }}" method="get" style="display:inline;">
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <input type="submit" value="Muokkaa" />
-    </form>
-    <form action="/remove/{{ comment.id }}" method="get" style="display:inline;">
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <input type="submit" value="Poista" />
-    </form>
-  </p>
-  {% endif %}
-  <hr />
-  {% endfor %}
-
-  {% if session.user_id %}
-  <h2>Uusi viesti</h2>
-
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
-
-  <form action="/new_comment" method="post">
-    <p>
-      Viesti:<br />
-      <textarea name="content" rows="5" cols="40" maxlength="5000"></textarea>
+    <p>Tagit: 
+      {% for tag in tags %}
+        <span>{{ tag.name }}</span>{% if not loop.last %}, {% endif %}
+      {% endfor %}
     </p>
-    <input type="hidden" name="post_id" value="{{ post.id }}" />
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" value="Lähetä" />
-  </form>
-  <hr />
-  {% else %}
-  <p>
-    <a href="/login">Kirjaudu lisätäksesi kommentti</a>
-  </p>
-  {% endif %}
+  </div>
 
+  <div class="comment">
+    <hr />
+    {% for comment in comments %}
+    <p id="{{ comment.id }}">
+      <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
+    </p>
+    <p>
+      {{ comment.content | show_lines }}
+    </p>
+    {% if comment.user_id == session.user_id %}
+    <p>
+      <form action="/edit/{{ comment.id }}" method="get" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" value="Muokkaa" />
+      </form>
+      <form action="/remove/{{ comment.id }}" method="get" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" value="Poista" />
+      </form>
+    </p>
+    {% endif %}
+    <hr />
+    {% endfor %}
+  </div>
+  <div class="new_comment">
+
+    {% if session.user_id %}
+    <h2>Uusi viesti</h2>
+
+    {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+    {% endfor %}
+
+    <form action="/new_comment" method="post">
+      <p>
+        Viesti:<br />
+        <textarea name="content" rows="5" cols="40" maxlength="5000"></textarea>
+      </p>
+      <input type="hidden" name="post_id" value="{{ post.id }}" />
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="submit" value="Lähetä" />
+    </form>
+    <hr />
+    {% else %}
+    <p>
+      <a href="/login">Kirjaudu lisätäksesi kommentti</a>
+    </p>
+    {% endif %}
+
+  </div>
 </body>
 
 </html>

@@ -2,27 +2,33 @@
 <html>
 
 <head>
+  <link rel="stylesheet" href="/static/main.css">
   <title>Viestin poisto</title>
 </head>
 
 <body>
-  <h1><a href="/">pixel-art-site</a></h1>
-  <h2>Viestin poisto</h2>
+  <div class="header">
+    <h1><a href="/">pixel-art-site</a></h1>
+  </div>
 
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
+  <div class="content">
+    <h2>Viestin poisto</h2>
 
-  <form action="/remove/{{ comment.id }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    {% for message in get_flashed_messages() %}
     <p>
-      Haluatko varmasti poistaa viestin?
+      <b>{{ message }}</b>
     </p>
-    <input type="submit" name="continue" value="Jatka" />
-    <input type="submit" name="cancel" value="Peruuta" />
-  </form>
+    {% endfor %}
+
+    <form action="/remove/{{ comment.id }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <p>
+        Haluatko varmasti poistaa viestin?
+      </p>
+      <input type="submit" name="continue" value="Jatka" />
+      <input type="submit" name="cancel" value="Peruuta" />
+    </form>
+  </div>
 </body>
 
 </html>

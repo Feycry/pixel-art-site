@@ -2,27 +2,33 @@
 <html>
 
 <head>
+  <link rel="stylesheet" href="/static/main.css">
   <title>Viestin muokkaus</title>
 </head>
 
 <body>
-  <h1><a href="/">pixel-art-site</a></h1>
-  <h2>Viestin muokkaus</h2>
+  <div class="header">
+    <h1><a href="/">pixel-art-site</a></h1>
+  </div>
 
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
+  <div class="content">
+    <h2>Viestin muokkaus</h2>
 
-  <form action="/edit/{{ comment.id }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    {% for message in get_flashed_messages() %}
     <p>
-      Viesti:<br />
-      <textarea name="content" rows="5" cols="40" maxlength="5000">{{ comment.content }}</textarea>
+      <b>{{ message }}</b>
     </p>
-    <input type="submit" value="Lähetä" />
-  </form>
+    {% endfor %}
+
+    <form action="/edit/{{ comment.id }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <p>
+        Viesti:<br />
+        <textarea name="content" rows="5" cols="40" maxlength="5000">{{ comment.content }}</textarea>
+      </p>
+      <input type="submit" value="Lähetä" />
+    </form>
+  </div>
 </body>
 
 </html>

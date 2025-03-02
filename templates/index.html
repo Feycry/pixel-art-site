@@ -1,39 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="https://www.w3schools.com/html/styles.css"> 
+  <link rel="stylesheet" href="/static/main.css">
   <title>pixel-art-site</title>
 </head>
 
 <body>
-  <h1><a href="/">pixel-art-site</a></h1>
+  <div class="header">
+    <h1><a href="/">pixel-art-site</a></h1>
+  </div>
 
-  <p>
-    {% if session.user_id %}
-    <a href="/logout">Log out</a> |
-    <a href="/submit">Create post</a>
-    {% else %}
-    <a href="/register">Sign up</a> |
-    <a href="/login">Sign in</a>
-    {% endif %}
-  </p>
+  <div class="nav">
+    <p>
+      {% if session.user_id %}
+      <a href="/logout">Log out</a> |
+      <a href="/submit">Create post</a>
+      {% else %}
+      <a href="/register">Sign up</a> |
+      <a href="/login">Sign in</a>
+      {% endif %}
+    </p>
+  </div>
 
-  <hr />
+  <div class="search">
+    <form action="/search" method="get">
+      <input type="text" name="query" placeholder="Search by tag, separated by comma" required />
+      <input type="submit" value="Search" />
+    </form>
+  </div>
 
-  <form action="/search" method="get">
-    <input type="text" name="query" placeholder="Search by tag, separated by comma" required />
-    <input type="submit" value="Search" />
-  </form>
-
-  <hr />
-  {% for post in posts %}
-  <p>
-    <a href="/post/{{ post.id }}">{{ post.title }}</a>
-    <br />
-    {{ post.total }} viestiä, uusin {{ post.last }}
-  </p>
-  <hr />
-  {% endfor %}
+  <div class="content">
+    <hr />
+    {% for post in posts %}
+    <p>
+      <a href="/post/{{ post.id }}">{{ post.title }}</a>
+      <br />
+      {{ post.total }} viestiä, uusin {{ post.last }}
+    </p>
+    <hr />
+    {% endfor %}
+  </div>
 </body>
 
 </html>
